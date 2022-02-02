@@ -46,7 +46,7 @@ public class SendMessage {
      * @throws MessagingException - if a wrongly formatted address is encountered.
      * @throws IOException - if service account credentials file not found.
      */
-    public static Message sendMessage(String fromEmailAddress,
+    public static Message sendEmail(String fromEmailAddress,
                                       String toEmailAddress)
             throws MessagingException, IOException {
         // Load pre-authorized user credentials from the environment.
