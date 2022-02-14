@@ -1,4 +1,4 @@
-// Copyright 2021 Google LLC
+// Copyright 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,15 +32,18 @@ import java.util.Collections;
 /* Class to demonstrate the use of Gmail Enable Auto Reply API*/
 public class EnableAutoReply {
     /**
-     * Enables the auto reply
+     * Enables the auto reply.
      *
-     * @throws IOException
+     * @return the reply message and response metadata.
+     * @throws IOException - if service account credentials file not found.
      */
-    public static void autoReply() throws IOException{
+    public static VacationSettings autoReply() throws IOException{
         // Load pre-authorized user credentials from the environment.
         // TODO(developer) - See https://developers.google.com/identity for
         // guides on implementing OAuth2 for your application.
-        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault().createScoped(Collections.singleton(GmailScopes.GMAIL_SETTINGS_BASIC));
+        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
+                .createScoped(Collections.singleton(GmailScopes.GMAIL_SETTINGS_BASIC))
+                .createDelegated("gduser1@workspacesamples.dev");
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
                 credentials);
 
@@ -63,6 +66,7 @@ public class EnableAutoReply {
             VacationSettings response = service.users().settings().updateVacation("me", vacationSettings).execute();
             // Prints the auto-reply response body
             System.out.println("Enabled auto reply with message : "+response.getResponseBodyHtml());
+            return response;
         } catch (GoogleJsonResponseException e) {
             // TODO(developer) - handle error appropriately
             System.err.println("Unable to enable auto reply: " + e.getDetails());
