@@ -32,13 +32,16 @@ public class UpdateSignature {
     /**
      * Update the gmail signature.
      *
-     * @throws IOException
+     * @return the updated signature id.
+     * @throws IOException- if service account credentials file not found.
      */
-    public static void updateGmailSignature() throws IOException {
+    public static String updateGmailSignature() throws IOException {
         // Load pre-authorized user credentials from the environment.
         // TODO(developer) - See https://developers.google.com/identity for
         // guides on implementing OAuth2 for your application.
-        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault().createScoped(Collections.singleton(GmailScopes.GMAIL_SETTINGS_BASIC));
+        GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
+                .createScoped(Collections.singleton(GmailScopes.GMAIL_SETTINGS_BASIC))
+                .createDelegated("gduser1@workspacesamples.dev");
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(
                 credentials);
 
@@ -59,7 +62,7 @@ public class UpdateSignature {
                 }
             }
             // Updating a new signature
-            SendAs aliasSettings = new SendAs().setSignature("I heart cats.");
+            SendAs aliasSettings = new SendAs().setSignature("Automated Signature");
             SendAs result = service.users().settings().sendAs().patch(
                             "me",
                             primaryAlias.getSendAsEmail(),
@@ -67,6 +70,7 @@ public class UpdateSignature {
                     .execute();
             //Prints the updated signature
             System.out.println("Updated signature - " + result.getSignature());
+            return result.getSignature();
         } catch (GoogleJsonResponseException e) {
             // TODO(developer) - handle error appropriately
             System.err.println("Unable to update signature: " + e.getDetails());
